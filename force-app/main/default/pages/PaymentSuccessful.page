@@ -1,0 +1,79 @@
+<apex:page controller="SuccessfullPaymentPageController" showHeader="false" standardStylesheets="false" title="Payment Success">
+    <apex:stylesheet value="{!$Resource.SuccessfulPaymentPageStyles}" />
+
+    <apex:includeScript value="https://unpkg.com/lucide@latest"></apex:includeScript>
+
+    <div class="container">
+        <div class="receipt-wrapper">
+            <div class="success-message">
+                <div class="success-icon">
+                    <i data-lucide="check-circle"></i>
+                </div>
+                <h1>Payment Successful!</h1>
+                <p>Thank you for your purchase. Your transaction has been completed.</p>
+            </div>
+
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div class="header-content">
+                        <div>
+                            <h2>Payment Receipt</h2>
+                            <p class="date">{!paymentDateTime}</p>
+                        </div>
+                        <i data-lucide="credit-card"></i>
+                    </div>
+                </div>
+
+                <div class="receipt-details">
+                    <div class="transaction-info">
+                        <div class="info-row">
+                            <span>Transaction ID</span>
+                            <span class="mono">{!transactionId}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Payment Method</span>
+                            <span>{!paymentType}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Fundraising</span>
+                            <span>Русоріз</span>
+                        </div>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="purchase-details">
+                        <div class="info-row total">
+                            <span>Total</span>
+                            <span>{!currencySign}{!amount}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="receipt-footer">
+                    <a href="https://flow-speed-8865--devivan.sandbox.lightning.force.com/lightning/n/Donation_Page" class="btn-back">
+                        <i data-lucide="arrow-left"></i>
+                        Back to App
+                    </a>
+                    <button class="btn-download">
+                        <i data-lucide="download"></i>
+                        Send receipt to Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+//         const now = new Date().toLocaleString('en-US', {
+//     year: 'numeric',
+//     month: 'long',
+//     day: 'numeric',
+//     hour: 'numeric',
+//     minute: 'numeric',
+//     second: 'numeric',
+//     hour12: true 
+// });
+
+// document.querySelector('.date').textContent = now;
+    </script>
+</apex:page>
