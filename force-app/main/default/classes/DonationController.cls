@@ -2,6 +2,7 @@ public with sharing class DonationController {
     @AuraEnabled
     public static String makeDonation(String fundraisingId, Decimal amount, String cur){
         try {
+            System.debug(fundraisingId);
             return createStripePaymentIntent(fundraisingId,amount,cur);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -11,6 +12,7 @@ public with sharing class DonationController {
     @AuraEnabled
     public static String cancelDonation(String paymentId){
         String stripeSecretKey = 'sk_test_51QLTecElvZyEGtYByIV2PTa0TYEiJ5v5SlNOKdniF4x1l6slniEAvybwrjmRkx9m6HPE4oOmY4OLLv8JVKCYmGhY00PDRsnDZ9';  // Alternatively, use Named Credential for secret key
+        // String stripeSecretKey = 'sk_test_51QNPbgITtcaPMXo84cRyMrCbeuUC1BCJcZuvPtv0I4O3yUdDR7og30VvGxiE3J1dNINOvAmi5rP84XdAuoUj1Ddg00PkdFHe06';  // Alternatively, use Named Credential for secret key
         
          String endpointUrl = 'https://api.stripe.com/v1/payment_intents/' + paymentId + '/cancel';
          
@@ -37,6 +39,7 @@ public with sharing class DonationController {
     private static String createStripePaymentIntent(String fundraisingId, Decimal amount, String cur) {
         String stripeUrl = 'https://api.stripe.com/v1/payment_intents';
         String stripeSecretKey = 'sk_test_51QLTecElvZyEGtYByIV2PTa0TYEiJ5v5SlNOKdniF4x1l6slniEAvybwrjmRkx9m6HPE4oOmY4OLLv8JVKCYmGhY00PDRsnDZ9';  // Alternatively, use Named Credential for secret key
+        // String stripeSecretKey = 'sk_test_51QNPbgITtcaPMXo84cRyMrCbeuUC1BCJcZuvPtv0I4O3yUdDR7og30VvGxiE3J1dNINOvAmi5rP84XdAuoUj1Ddg00PkdFHe06';  // Alternatively, use Named Credential for secret key
         HttpRequest req = new HttpRequest();
         req.setEndpoint(stripeUrl);
         req.setMethod('POST');
@@ -46,6 +49,8 @@ public with sharing class DonationController {
                             '&amount=' + amount + 
                             '&metadata[user]=Ivan Kozak' + 
                             '&expand[]=latest_charge' + 
+                            '&payment_method_types[0]: card' + 
+                            '&payment_method_types[1]: google_pay' +
                             '&automatic_payment_methods[enabled]=true';   
         req.setBody(bodyParams);
         try {

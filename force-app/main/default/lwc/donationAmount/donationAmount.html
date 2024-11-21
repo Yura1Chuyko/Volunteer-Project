@@ -20,11 +20,11 @@
         </template>
     </lightning-button-group>
     <lightning-input
-        label="Enter Amount"
+        label={amountInputLabel}
         value={donationAmount}
         onchange={handleCustomAmountChange}
         type="number"
         step="0.01"
-        min="1">
+        min={minAmountToPay}>
     </lightning-input>
 </template>

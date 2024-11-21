@@ -20,4 +20,19 @@ public with sharing class SuccessfullPaymentPageController {
      currencySign = ApexPages.currentPage().getParameters().get('currency');
 
     }
+
+    @RemoteAction
+    public static String sendReceiptToEmail(String transactionId, String donorEmail, String currencySign, Decimal amount, String paymentDateTime, String paymentType) {
+        try {
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+            email.setToAddresses(new String[] { 'ivan.kozak.mknus.2023@lpnu.ua' });
+            email.setSubject('Payment Receipt');
+            String emailTemplate = EmailService.sendDonationReceipt('ivan.kozak.mknus.2023@lpnu.ua', transactionId, paymentType, currencySign, amount, paymentDateTime);
+            email.setHtmlBody(emailTemplate);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { email });
+            return 'Email sent successfully!';
+        } catch (Exception ex) {
+            return 'Failed to send email: ' + ex.getMessage();
+        }
+    }
  }

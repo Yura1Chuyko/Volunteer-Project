@@ -11,7 +11,6 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 export default class DonationForm extends LightningElement {
 
     currentStep = '1';
-    selectedFundraising = '';
     donationAmount = '';
     selectedPaymentMethod = 'card';
     stripe;
@@ -23,11 +22,16 @@ export default class DonationForm extends LightningElement {
     currency = 'UAH';
     paymentId;
 
+
+    selectedFundraising = '';
+
+
     connectedCallback() {
 
         loadScript(this, STRIPE_JS)
             .then(() => {
                 this.stripe = Stripe('pk_test_51QLTecElvZyEGtYBgUm1fWOlS61F5ZFTLpg0PLcunjFMmJi8gV1FKXQDYUa6A7KBb5TneC8bmaOz8xfy0MSsCgIR00WNcFOtFA');
+                // this.stripe = Stripe('pk_test_51QNPbgITtcaPMXo81T8FNnubypLQia3Bo5BOQvZVc14IJ3Wdg6YlLTPQPFtpQ5f9FOzh6FlaufEzkUqV38kYg1Vp00eTPG2Nt9');
 
             })
             .catch((error) => {
@@ -35,42 +39,48 @@ export default class DonationForm extends LightningElement {
             });
     }
 
-    get isStepOne(){
+    get isStepOne() {
         return this.currentStep === '1';
     }
 
-    get isStepTwo(){
+    get isStepTwo() {
         return this.currentStep === '2';
     }
 
-    get isStepThree(){
+    get isStepThree() {
         return this.currentStep === '3';        
     }
 
-    handleFundraisingSelected(event){
-        this.selectedFundraising = event.detail.fundRaising;
+
+    handleFundraisingSelected(event) {
+        this.selectedFundraising = event.detail.fundraising;
+        console.log(this.selectedFundraising);
+        
     }
 
     handleAmountChange(event){
         this.donationAmount = event.detail.amount;
-        console.log(this.donationAmount);
         
     }
 
     handleCurrencyChange(event){
-        console.log(event.detail.currency);
         this.currency = event.detail.currency;
     }
 
     handleBackClick(){
         this.currentStep = '1';
+        this.selectedFundraising = '';
     }
 
     handleNextClick(){
         if(this.currentStep === '3'){
             return;
         }
-        this.currentStep = (+this.currentStep + 1).toString();
+        if(this.selectedFundraising !== ''){
+            this.currentStep = (+this.currentStep + 1).toString();
+        } else{
+            this.showToast('Warning', 'Please, select fundraising you`d like to donate', 'warning');
+        }
     }
 
 
@@ -82,8 +92,6 @@ export default class DonationForm extends LightningElement {
                 type: 'tabs',
                 defaultCollapsed: false,
             },
-            paymentMethodTypes: ['card', 'google_pay'],
-
         };
 
         this.elements = this.stripe.elements({ clientSecret, appearance, loader: 'auto' });
@@ -95,8 +103,13 @@ export default class DonationForm extends LightningElement {
 
     async handleDonation() {
         // TODO check if form is valid
+        if(!this.donationAmount || this.donationAmount <= 0){
+            this.showToast('Warning', 'Please, choose the amount of money you`d like to donate', 'warning');
+            return;
+        }
         this.currentStep = '3';
         this.initializingPayment = true;
+        
         try{
             const clientSecret = await makeDonation({
                 fundraisingId: this.selectedFundraising,

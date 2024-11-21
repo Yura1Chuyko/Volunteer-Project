@@ -53,7 +53,7 @@
                         <i data-lucide="arrow-left"></i>
                         Back to App
                     </a>
-                    <button class="btn-download">
+                    <button class="btn-download" onclick="sendEmail()">
                         <i data-lucide="download"></i>
                         Send receipt to Email
                     </button>
@@ -61,19 +61,46 @@
             </div>
         </div>
     </div>
+    <div id="customMessage" class="custom-message" style="display: none;">
+        <p id="messageText"></p>
+    </div>
 
     <script>
         lucide.createIcons();
-//         const now = new Date().toLocaleString('en-US', {
-//     year: 'numeric',
-//     month: 'long',
-//     day: 'numeric',
-//     hour: 'numeric',
-//     minute: 'numeric',
-//     second: 'numeric',
-//     hour12: true 
-// });
+        function sendEmail() {
+            const donorEmail = 'ivan.kozak.mknus.2023@lpnu.ua';
+            const transactionId = '{!transactionId}';
+            const paymentDateTime = '{!paymentDateTime}';
+            const paymentType = '{!paymentType}';
+            const amount = '{!amount}';
+            const currencySign = '{!currencySign}';
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SuccessfullPaymentPageController.sendReceiptToEmail}',
+                transactionId,
+                donorEmail,
+                currencySign,
+                amount,
+                paymentDateTime,
+                paymentType,
+                function(result, event) {
+            let messageElement = document.getElementById("customMessage");
+            let messageText = document.getElementById("messageText");
+            
+            if (event.status) {
+                messageElement.classList.remove('error');
+                messageText.textContent = result || "Email sent successfully!";
+            } else {
+                messageElement.classList.add('error');
+                messageText.textContent = 'Failed to send email: ' + event.message;
+            }
+            document.querySelector('.btn-download').setAttribute('disabled', true);
+            messageElement.style.display = 'block';
 
-// document.querySelector('.date').textContent = now;
+            setTimeout(function() {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+        );
+    }
     </script>
 </apex:page>
