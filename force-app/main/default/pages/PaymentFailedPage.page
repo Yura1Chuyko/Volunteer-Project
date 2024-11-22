@@ -1,0 +1,62 @@
+<apex:page controller="FailedPaymentPageController" showHeader="false" standardStylesheets="false" title="Payment Failed">
+    <apex:stylesheet value="{!$Resource.SuccessfulPaymentPageStyles}" />
+
+    <apex:includeScript value="https://unpkg.com/lucide@latest"></apex:includeScript>
+
+    <div class="container failed">
+        <div class="receipt-wrapper">
+            <div class="error-message">
+                <div class="error-icon">
+                    <i data-lucide="x-circle"></i>
+                </div>
+                <h1>Payment Failed</h1>
+                <p>We're sorry, but your payment was not successful. Please try again or contact support if the issue persists.</p>
+            </div>
+
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div class="header-content">
+                        <div>
+                            <h2>Transaction Details</h2>
+                            <p class="date">{!failedPaymentDateTime}</p>
+                        </div>
+                        <i data-lucide="alert-triangle"></i>
+                    </div>
+                </div>
+
+                <div class="receipt-details">
+                    <div class="transaction-info">
+                        <div class="info-row">
+                            <span>Transaction ID</span>
+                            <span class="mono">{!transactionId}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Payment Method</span>
+                            <span>{!paymentType}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Fundraising</span>
+                            <span>{!fundraisingName}</span>
+                        </div>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="purchase-details">
+                        <div class="info-row total">
+                            <span>Attempted Amount</span>
+                            <span>{!currencySign}{!amount}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="receipt-footer">
+                    <a href="https://flow-speed-8865--devivan.sandbox.lightning.force.com/lightning/n/Donation_Page" class="btn-back">
+                        <i data-lucide="arrow-left"></i>
+                        Back to App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+    </script>
+</apex:page>
