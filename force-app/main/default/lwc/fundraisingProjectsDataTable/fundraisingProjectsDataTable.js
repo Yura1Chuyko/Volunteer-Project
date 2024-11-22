@@ -1,5 +1,5 @@
 import { LightningElement, track } from 'lwc';
-import { generateData, getFundraisingActions } from 'c/donationUtils';
+import { getFundraisingActions } from 'c/donationUtils';
 
 
 const columns = [
@@ -20,15 +20,16 @@ export default class FundraisingProjectsDataTable extends LightningElement {
         getFundraisingActions('In Progress')
             .then(res => {
                 this.data = res
-                console.log(res);
             })
     }
 
     handleFundRaisingSelection(event){
-        console.log(event.detail.selectedRows[0]);
         this.dispatchEvent(new CustomEvent('fundraisingselection', {
             detail: {
-                fundraising: event.detail.selectedRows[0].Name
+                fundraising: {
+                    id: event.detail.selectedRows[0].Id,
+                    name: event.detail.selectedRows[0].Name
+                }
             }
         }))
     }

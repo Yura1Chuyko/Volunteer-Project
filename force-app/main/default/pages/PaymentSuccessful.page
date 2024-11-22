@@ -36,7 +36,7 @@
                         </div>
                         <div class="info-row">
                             <span>Fundraising</span>
-                            <span>Русоріз</span>
+                            <span>{!fundraisingName}</span>
                         </div>
                         <div class="divider"></div>
                     </div>
@@ -68,16 +68,19 @@
     <script>
         lucide.createIcons();
         function sendEmail() {
-            const donorEmail = 'ivan.kozak.mknus.2023@lpnu.ua';
+            const donorEmail = '{!donorEmail}';
             const transactionId = '{!transactionId}';
             const paymentDateTime = '{!paymentDateTime}';
             const paymentType = '{!paymentType}';
             const amount = '{!amount}';
             const currencySign = '{!currencySign}';
+            const fundraisingName = '{!fundraisingName}';
+            
             Visualforce.remoting.Manager.invokeAction(
                 '{!$RemoteAction.SuccessfullPaymentPageController.sendReceiptToEmail}',
                 transactionId,
                 donorEmail,
+                fundraisingName,
                 currencySign,
                 amount,
                 paymentDateTime,

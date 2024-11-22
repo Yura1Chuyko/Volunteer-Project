@@ -6,11 +6,17 @@ export const getFundraisingActions = async (status) =>{
         const res = await getFundraisingActionsByStatus({status}); 
 
         const formattedFundraisingActions = res.map(fa => {
+            let volunteerName;
+            if(fa.Volunteer__r.FirstName){
+                volunteerName = fa.Volunteer__r.FirstName + ' ' + fa.Volunteer__r.LastName;
+            } else{
+                volunteerName = fa.Volunteer__r.LastName;
+            }
             return {
                 ...fa,
                 fundraisingUrl: '/lightning/r/Fundraising_Action__c/' + fa.Id + '/view',
                 VolunteerUrl: '/lightning/r/User/' + fa.Volunteer__c + '/view',
-                VolunteerName: fa.Volunteer__r.Username,
+                VolunteerName: volunteerName,
                 Description__c: fa.Associated_Military_Request__r.Description__c,
                 Category__c: fa.Associated_Military_Request__r.Category__c
             }

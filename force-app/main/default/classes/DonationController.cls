@@ -1,9 +1,8 @@
 public with sharing class DonationController {
     @AuraEnabled
-    public static String makeDonation(String fundraisingId, Decimal amount, String cur){
+    public static String makeDonation(String fundraisingId, String fundraisingName, Decimal amount, String cur){
         try {
-            System.debug(fundraisingId);
-            return createStripePaymentIntent(fundraisingId,amount,cur);
+            return createStripePaymentIntent(fundraisingId,fundraisingName,amount,cur);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -11,10 +10,9 @@ public with sharing class DonationController {
 
     @AuraEnabled
     public static String cancelDonation(String paymentId){
-        String stripeSecretKey = 'sk_test_51QLTecElvZyEGtYByIV2PTa0TYEiJ5v5SlNOKdniF4x1l6slniEAvybwrjmRkx9m6HPE4oOmY4OLLv8JVKCYmGhY00PDRsnDZ9';  // Alternatively, use Named Credential for secret key
-        // String stripeSecretKey = 'sk_test_51QNPbgITtcaPMXo84cRyMrCbeuUC1BCJcZuvPtv0I4O3yUdDR7og30VvGxiE3J1dNINOvAmi5rP84XdAuoUj1Ddg00PkdFHe06';  // Alternatively, use Named Credential for secret key
-        
-         String endpointUrl = 'https://api.stripe.com/v1/payment_intents/' + paymentId + '/cancel';
+        StripeSecret__mdt stripeSecret = StripeSecret__mdt.getInstance('StripeSecret');
+        String stripeSecretKey = stripeSecret.StripeSecretKey__c;
+        String endpointUrl = 'https://api.stripe.com/v1/payment_intents/' + paymentId + '/cancel';
          
          HttpRequest req = new HttpRequest();
 
@@ -35,22 +33,38 @@ public with sharing class DonationController {
         }
     }
 
+    private static String getDonorName(){
+        String donorFirstName = UserInfo.getFirstName();
+        String donorLastName = UserInfo.getLastName();
+        String donorFullName = '';
+        if (donorFirstName != null) {
+            donorFullName = donorFirstName + ' ' + donorLastName;
+        } else {
+            donorFullName = donorLastName;
+        }
+        return donorFullName;
+    }
 
-    private static String createStripePaymentIntent(String fundraisingId, Decimal amount, String cur) {
+    private static String createStripePaymentIntent(String fundraisingId, String fundraisingName, Decimal amount, String cur) {
         String stripeUrl = 'https://api.stripe.com/v1/payment_intents';
-        String stripeSecretKey = 'sk_test_51QLTecElvZyEGtYByIV2PTa0TYEiJ5v5SlNOKdniF4x1l6slniEAvybwrjmRkx9m6HPE4oOmY4OLLv8JVKCYmGhY00PDRsnDZ9';  // Alternatively, use Named Credential for secret key
-        // String stripeSecretKey = 'sk_test_51QNPbgITtcaPMXo84cRyMrCbeuUC1BCJcZuvPtv0I4O3yUdDR7og30VvGxiE3J1dNINOvAmi5rP84XdAuoUj1Ddg00PkdFHe06';  // Alternatively, use Named Credential for secret key
+        StripeSecret__mdt stripeSecret = StripeSecret__mdt.getInstance('StripeSecret');
+        String stripeSecretKey = stripeSecret.StripeSecretKey__c;
+
         HttpRequest req = new HttpRequest();
         req.setEndpoint(stripeUrl);
         req.setMethod('POST');
         req.setHeader('Authorization', 'Bearer ' + stripeSecretKey);
         req.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        String donorFullName = getDonorName();
+        String donorEmail = UserInfo.getUserEmail();
+
         String bodyParams = 'currency=' + cur + 
                             '&amount=' + amount + 
-                            '&metadata[user]=Ivan Kozak' + 
-                            '&expand[]=latest_charge' + 
-                            '&payment_method_types[0]: card' + 
-                            '&payment_method_types[1]: google_pay' +
+                            '&metadata[donorFullName]=' + donorFullName +
+                            '&metadata[donorEmail]=' + donorEmail +
+                            '&metadata[fundraisingId]=' + fundraisingId +
+                            '&metadata[fundraisingName]=' + fundraisingName +
                             '&automatic_payment_methods[enabled]=true';   
         req.setBody(bodyParams);
         try {
@@ -58,7 +72,6 @@ public with sharing class DonationController {
             HttpResponse res = http.send(req);
             if (res.getStatusCode() == 200) {
                 Map<String, Object> result = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
-                System.debug((String) result.get('latest_charge'));
                 return (String) result.get('client_secret');
             } else {
                 throw new AuraHandledException('Error from Stripe: ' + res.getBody());

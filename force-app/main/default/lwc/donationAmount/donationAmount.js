@@ -27,23 +27,6 @@ export default class DonationAmount extends LightningElement {
             .then(rate => this.minAmount = rate)
     }
 
-    // getCurrencyCode(){
-    //     switch (this.currency){
-    //         case '₴': {
-    //             return 'UAH'
-    //         }
-    //         case '$': {
-    //             return 'USD'
-    //         }
-    //         case '€': {
-    //             return 'EUR'
-    //         }
-    //         case '£': {
-    //             return 'GBP'
-    //         }
-    //     }
-    // }
-
 
     async handleCurrencyChange(event){
         this.currency = event.target.label;

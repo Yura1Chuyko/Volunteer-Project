@@ -5,7 +5,6 @@ import makeDonation from '@salesforce/apex/DonationController.makeDonation';
 import cancelDonation from '@salesforce/apex/DonationController.cancelDonation';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
-// const STRIPE_JS = 'https://js.stripe.com/v3/';
 
 
 export default class DonationForm extends LightningElement {
@@ -53,9 +52,7 @@ export default class DonationForm extends LightningElement {
 
 
     handleFundraisingSelected(event) {
-        this.selectedFundraising = event.detail.fundraising;
-        console.log(this.selectedFundraising);
-        
+        this.selectedFundraising = event.detail.fundraising;        
     }
 
     handleAmountChange(event){
@@ -83,8 +80,6 @@ export default class DonationForm extends LightningElement {
         }
     }
 
-
-
     renderPaymentForm(clientSecret){
         const appearance = { theme: 'stripe' };
         const options = {
@@ -111,8 +106,11 @@ export default class DonationForm extends LightningElement {
         this.initializingPayment = true;
         
         try{
+            console.log(this.selectedFundraising.id);
+            
             const clientSecret = await makeDonation({
-                fundraisingId: this.selectedFundraising,
+                fundraisingId: this.selectedFundraising.id,
+                fundraisingName: this.selectedFundraising.name,
                 amount: this.donationAmount,
                 cur: this.currency.toString(),
             });
@@ -161,7 +159,7 @@ export default class DonationForm extends LightningElement {
             const { error, paymentIntent } = await this.stripe.confirmPayment({
                 elements: this.elements,
                 confirmParams: {
-                    return_url: 'https://flow-speed-8865--devivan.sandbox.my.salesforce-setup.com/apex/ProcessingPayment?hello=world'
+                    return_url: 'https://flow-speed-8865--devivan.sandbox.my.salesforce-setup.com/apex/ProcessingPayment'
                 },
             });            
     

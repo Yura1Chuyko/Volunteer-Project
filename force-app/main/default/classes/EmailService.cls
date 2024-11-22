@@ -1,9 +1,10 @@
 public with sharing class EmailService {
     public static String sendDonationReceipt(String recipientEmail, 
-                                           String transactionId, 
+                                           String transactionId,
+                                           String fundraisingName, 
                                            String paymentMethod,
                                            String currencySign, 
-                                           Decimal amount, 
+                                           String amount, 
                                            String paymentDate) {
         return '<!DOCTYPE html>' +
                             '<html lang="en">' +
@@ -24,12 +25,16 @@ public with sharing class EmailService {
                             '<p style="margin: 4px 0 0; color: #1e293b; font-size: 15px; font-weight: 600; font-family: monospace;">' + transactionId + '</p>' +
                             '</div>' +
                             '<div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">' +
+                            '<p style="margin: 0; color: #64748b; font-size: 14px;">Fundraising</p>' +
+                            '<p style="margin: 4px 0 0; color: #1e293b; font-size: 15px; font-weight: 600;">' + fundraisingName + '</p>' +
+                            '</div>' +
+                            '<div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">' +
                             '<p style="margin: 0; color: #64748b; font-size: 14px;">Payment Method</p>' +
                             '<p style="margin: 4px 0 0; color: #1e293b; font-size: 15px; font-weight: 600;">' + paymentMethod + '</p>' +
                             '</div>' +
                             '<div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">' +
                             '<p style="margin: 0; color: #64748b; font-size: 14px;">Total Amount</p>' +
-                            '<p style="margin: 4px 0 0; color: #1e293b; font-size: 15px; font-weight: 600;">' + currencySign + String.valueOf(amount.setScale(2)) + '</p>' +
+                            '<p style="margin: 4px 0 0; color: #1e293b; font-size: 15px; font-weight: 600;">' + currencySign + amount + '</p>' +
                             '</div>' +
                             '<div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">' +
                             '<p style="margin: 0; color: #64748b; font-size: 14px;">Payment Date</p>' +
