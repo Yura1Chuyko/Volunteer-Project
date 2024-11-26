@@ -1,0 +1,35 @@
+<template>
+    <lightning-card title="Pending Approvals" icon-name="standard:approval">
+        <template if:true={pendingApprovals}>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Request Name</th>
+                        <th scope="col">Requested Amount</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Visibility</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={pendingApprovals} for:item="approval">
+                        <tr key={approval.Id}>
+                            <td>{approval.Name}</td>
+                            <td>{approval.Requested_Amount__c}</td>
+                            <td>{approval.Category__c}</td>
+                            <td>{approval.Visibility__c}</td>
+                            <td>
+                                <lightning-button label="Approve" variant="brand" data-id={approval.Id} onclick={approveRequest}></lightning-button>
+                                <lightning-button label="Reject" variant="destructive" data-id={approval.Id} onclick={rejectRequest}></lightning-button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+        <template if:false={pendingApprovals}>
+            <p>No pending approvals found.</p>
+        </template>
+    </lightning-card>
+
+</template>

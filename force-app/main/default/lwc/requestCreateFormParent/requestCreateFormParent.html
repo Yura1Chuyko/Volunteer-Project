@@ -1,0 +1,17 @@
+<template>
+    <lightning-card title="Request Assistance">
+        <div class="slds-p-around_medium">
+            <!-- Button to Show Form -->
+            <lightning-button
+                label="Create Request"
+                variant="brand"
+                onclick={handleOpenForm}>
+            </lightning-button>
+        </div>
+
+        <!-- Include the Child Component (requestCreate) -->
+        <template if:true={showForm}>
+            <c-request-create-form oncloserequestform={handleCloseForm}></c-request-create-form>
+        </template>
+    </lightning-card>
+</template>
