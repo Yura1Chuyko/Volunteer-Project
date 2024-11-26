@@ -1,0 +1,16 @@
+<template>
+    <h2 class="slds-text-heading_medium slds-m-bottom_medium slds-text-align_center">
+        <strong>Choose the fundraising project you'd like to donate</strong>
+    </h2>
+    <div style="height: 300px;">
+        <lightning-datatable
+            class="slds-max-medium-table_stacked-horizontal"
+            style="height: 300px; overflow:scroll"
+            key-field="id"
+            max-row-selection="1"
+            data={data}
+            onrowselection={handleFundRaisingSelection}
+            columns={columns}>
+        </lightning-datatable>
+    </div>
+</template>

@@ -1,0 +1,55 @@
+<template>
+    <lightning-card title="Donate Today" icon-name="standard:budget">
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-m-top_medium">
+                <lightning-progress-indicator current-step={currentStep}>
+                    <lightning-progress-step label="Choose Fundraising" value="1"></lightning-progress-step>
+                    <lightning-progress-step label="Enter amount you want to donate" value="2"></lightning-progress-step>
+                    <lightning-progress-step label="Pay money" value="3"></lightning-progress-step>
+                </lightning-progress-indicator>
+            </div>
+            <div class="slds-m-top_medium">
+                <template lwc:if={isStepOne}>
+                        <c-fundraising-projects-data-table onfundraisingselection={handleFundraisingSelected}></c-fundraising-projects-data-table>
+                        <lightning-button onclick={handleNextClick} class="slds-grid slds-grid_align-end slds-m-top_medium" label="Next" variant="brand"></lightning-button>
+                </template>
+                <template lwc:if={isStepTwo}>
+                    <c-donation-amount oncurrencychange={handleCurrencyChange} onamountchange={handleAmountChange}></c-donation-amount>
+                    <div class="slds-grid slds-grid_align-end slds-m-top_medium">
+                        <lightning-button
+                            label="Back"
+                            onclick={handleBackClick}>
+                        </lightning-button>
+                        <lightning-button
+                            variant="brand"
+                            label="Donate"
+                            onclick={handleDonation}
+                            class="slds-m-left_small">
+                        </lightning-button>
+                    </div>
+                </template>
+            </div>
+            <template lwc:if={isStepThree}>
+                <div class="spinner-wrapper">
+                    <lightning-spinner lwc:if={initializingPayment} alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+                <div class="slds-m-around_medium" data-id="payment-element">
+                    <div  lwc:if={stripeFormRendered} class="slds-grid slds-grid_align-end slds-m-top_medium">
+                        <lightning-button
+                            class="slds-medium-text-heading_small" 
+                            onclick={handleCancelPayment} 
+                            label="Cancel Payment">
+                        </lightning-button>
+                        <lightning-button 
+                            variant="brand"
+                            onclick={handleConfirmPayment} 
+                            class="slds-m-left_small slds-medium-text-heading_small"
+                            label="Confirm Payment">
+                        </lightning-button>
+                    </div>
+
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,109 @@
+<apex:page controller="SuccessfullPaymentPageController" showHeader="false" standardStylesheets="false" title="Payment Success">
+    <apex:stylesheet value="{!$Resource.SuccessfulPaymentPageStyles}" />
+
+    <apex:includeScript value="https://unpkg.com/lucide@latest"></apex:includeScript>
+
+    <div class="container">
+        <div class="receipt-wrapper">
+            <div class="success-message">
+                <div class="success-icon">
+                    <i data-lucide="check-circle"></i>
+                </div>
+                <h1>Payment Successful!</h1>
+                <p>Thank you for your purchase. Your transaction has been completed.</p>
+            </div>
+
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div class="header-content">
+                        <div>
+                            <h2>Payment Receipt</h2>
+                            <p class="date">{!paymentDateTime}</p>
+                        </div>
+                        <i data-lucide="credit-card"></i>
+                    </div>
+                </div>
+
+                <div class="receipt-details">
+                    <div class="transaction-info">
+                        <div class="info-row">
+                            <span>Transaction ID</span>
+                            <span class="mono">{!transactionId}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Payment Method</span>
+                            <span>{!paymentType}</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Fundraising</span>
+                            <span>{!fundraisingName}</span>
+                        </div>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="purchase-details">
+                        <div class="info-row total">
+                            <span>Total</span>
+                            <span>{!currencySign}{!amount}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="receipt-footer">
+                    <a href="https://flow-speed-8865.lightning.force.com/lightning/n/Donation_Page" class="btn-back">
+                        <i data-lucide="arrow-left"></i>
+                        Back to App
+                    </a>
+                    <button class="btn-download" onclick="sendEmail()">
+                        <i data-lucide="download"></i>
+                        Send receipt to Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="customMessage" class="custom-message" style="display: none;">
+        <p id="messageText"></p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function sendEmail() {
+            const donorEmail = '{!donorEmail}';
+            const transactionId = '{!transactionId}';
+            const paymentDateTime = '{!paymentDateTime}';
+            const paymentType = '{!paymentType}';
+            const amount = '{!amount}';
+            const currencySign = '{!currencySign}';
+            const fundraisingName = '{!fundraisingName}';
+            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.SuccessfullPaymentPageController.sendReceiptToEmail}',
+                transactionId,
+                donorEmail,
+                fundraisingName,
+                currencySign,
+                amount,
+                paymentDateTime,
+                paymentType,
+                function(result, event) {
+            let messageElement = document.getElementById("customMessage");
+            let messageText = document.getElementById("messageText");
+            
+            if (event.status) {
+                messageElement.classList.remove('error');
+                messageText.textContent = result || "Email sent successfully!";
+            } else {
+                messageElement.classList.add('error');
+                messageText.textContent = 'Failed to send email: ' + event.message;
+            }
+            document.querySelector('.btn-download').setAttribute('disabled', true);
+            messageElement.style.display = 'block';
+
+            setTimeout(function() {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+        );
+    }
+    </script>
+</apex:page>

@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Request Assistance" icon-name="standard:case">
+    <div class="slds-p-around_medium">
+        <!-- Lightning Record Form for Military_Request__c -->
+        <lightning-record-form
+            record-id={recordId}
+            object-api-name="Request_Approval__c"
+            fields={fields}
+            onsuccess={handleSuccess}
+            onerror={handleError}>
+        </lightning-record-form>
+    </div>
+    </lightning-card>
+</template>

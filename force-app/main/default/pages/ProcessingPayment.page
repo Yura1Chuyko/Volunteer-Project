@@ -1,0 +1,3 @@
+<apex:page controller="StripePaymentController" action="{!handleRedirect}">
+    <h1>Processing Payment...</h1>
+</apex:page>
